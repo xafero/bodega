@@ -1,6 +1,10 @@
 package com.xafero.bodega;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -16,9 +20,16 @@ import java.util.Set;
 public class RetentionMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
     private final Properties locals;
+    private final File localsFile;
 
     public RetentionMap() {
+        this(new File("local-storage.cfg"));
+    }
+
+    public RetentionMap(File localsFile) {
         this.locals = new Properties();
+        this.localsFile = localsFile;
+        load(locals, localsFile);
     }
 
     @Override
@@ -33,6 +44,7 @@ public class RetentionMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         String key = toString(objKey);
         String val = toString(objVal);
         String old = (String) locals.setProperty(key, val);
+        store(locals, localsFile);
         return fromString(old);
     }
 
@@ -172,6 +184,25 @@ public class RetentionMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
             return new URL(txt);
         } catch (MalformedURLException e) {
             return null;
+        }
+    }
+
+    private void load(Properties props, File file) {
+        if (!file.exists()) {
+            return;
+        }
+        try (FileInputStream in = new FileInputStream(file)) {
+            props.load(in);
+        } catch (IOException ex) {
+            throw new UnsupportedOperationException(file + "", ex);
+        }
+    }
+
+    private void store(Properties props, File file) {
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            props.store(out, "");
+        } catch (IOException ex) {
+            throw new UnsupportedOperationException(file + "", ex);
         }
     }
 }
