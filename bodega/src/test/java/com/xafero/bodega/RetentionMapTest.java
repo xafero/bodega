@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -18,7 +17,7 @@ public class RetentionMapTest {
 
     @Test
     public void testFirstMap() throws MalformedURLException {
-        Map<Object, Object> map = new LinkedHashMap<>();
+        Map<Object, Object> map = new RetentionMap<>();
         map.put(true, false);
         map.put((byte) 1, (byte) 2);
         map.put((short) 1, (short) 2);
